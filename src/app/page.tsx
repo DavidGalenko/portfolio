@@ -44,6 +44,43 @@ export default function Home() {
     visible: { opacity: 1, y: 0, transition: { duration: 1 } },
   };
 
+  const contactButtonRef = useRef<HTMLButtonElement | null>(null);
+  const glowRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const button = contactButtonRef.current;
+    const glow = glowRef.current;
+
+    if (!button || !glow) return;
+
+    const handleMove = (e: MouseEvent) => {
+      const rect = button.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      glow.style.transform = `translate(${x - 40}px, ${y - 40}px)`;
+    };
+
+    const handleEnter = () => {
+      glow.style.opacity = "0.5";
+    };
+
+    const handleLeave = () => {
+      glow.style.opacity = "0";
+    };
+
+    button.addEventListener("mousemove", handleMove);
+    button.addEventListener("mouseenter", handleEnter);
+    button.addEventListener("mouseleave", handleLeave);
+
+    return () => {
+      button.removeEventListener("mousemove", handleMove);
+      button.removeEventListener("mouseenter", handleEnter);
+      button.removeEventListener("mouseleave", handleLeave);
+    };
+    
+  }, []);
+
   return (
     <div className="w-full">
       {/* Animated Intro Overlay */}
@@ -52,20 +89,49 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 1 } }}
-            className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center px-6 text-center"
+            className="fixed inset-0 z-50 bg-black flex flex-col justify-between px-6 py-8"
           >
-            <h1 className="text-white text-4xl md:text-6xl font-bold">
-              {typedName}
-              <span className="text-white animate-pulse">|</span>
-            </h1>
-            <motion.p
+            {/* Header Navigation */}
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 2, duration: 1 }}
-              className="text-slate-300 text-lg mt-4"
+              transition={{ delay: 4, duration: 0.8 }}
+              className="flex flex-wrap justify-between items-center gap-4 z-10 relative"
             >
-              Full Stack Developer | DJ | Creative Thinker
-            </motion.p>
+              <div className="flex gap-6 text-sm font-semibold text-slate-300">
+                <span className="text-white">About</span>
+                <span className="text-white">Projects</span>
+                <span className="text-white">Resume</span>
+              </div>
+              <div className="relative overflow-hidden w-fit">
+                <div className="contact-glow-border" />
+                <button className="contact-button-inner !bg-black text-white">Contact Me</button>
+              </div>
+            </motion.div>
+
+            {/* Centered Hero Text */}
+            <div className="text-center flex flex-col items-center justify-center flex-1 px-6">
+              <h1 className="text-white text-4xl md:text-6xl font-bold">
+                {typedName}
+                {typedName.length < fullName.length && (
+                  <span className="text-white animate-pulse">|</span>
+                )}
+              </h1>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 3, duration: 0.8 }}
+                className="text-slate-300 text-lg mt-4"
+              >
+                Full Stack Developer | DJ | Creative Thinker
+              </motion.p>
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="flex flex-col items-center pb-6 mt-auto">
+              <div className="text-sm text-black mb-1">Scroll</div>
+              <div className="text-2xl text-black">↓</div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -99,13 +165,19 @@ export default function Home() {
           </div>
 
           {/* Contact Button (already styled) */}
-          <div className="contact-glow-wrapper">
+          <div className="contact-glow-wrapper relative">
             <div className="contact-glow-border" />
             <button
+              ref={contactButtonRef}
               onClick={() => scrollToSection(contactRef)}
-              className="contact-button-inner"
+              className="contact-button-inner relative z-10 overflow-hidden"
             >
               Contact Me
+              <div
+                ref={glowRef}
+                className="absolute w-20 h-20 bg-white opacity-0 rounded-full blur-xl pointer-events-none transition-opacity duration-300"
+                style={{ top: 0, left: 0, transform: "translate(-1000px, -1000px)" }}
+              />
             </button>
           </div>
         </div>
