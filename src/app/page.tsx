@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence} from "framer-motion";
+import Link from "next/link";
 
 export default function Home() {
   const aboutRef = useRef<HTMLDivElement | null>(null);
@@ -80,6 +81,14 @@ export default function Home() {
     };
     
   }, []);
+
+  useEffect(() => {
+    if (showIntro) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [showIntro]);
 
   return (
     <div className="w-full">
@@ -305,20 +314,44 @@ export default function Home() {
       {/* Projects */}
       <section
         ref={projectsRef}
-        className="h-screen flex items-center justify-center bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white"
+        className="min-h-screen px-6 py-20 flex flex-col items-center justify-start bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white"
       >
         <motion.div
           initial="hidden"
           whileInView="visible"
+          viewport={{ once: false, amount: 0.3 }}
           variants={fadeIn}
-          className="text-center max-w-2xl px-4"
+          className="max-w-4xl w-full text-center"
         >
-          <h2 className="text-4xl font-bold mb-4">Projects</h2>
-          <p className="text-lg text-slate-300">
-            Featuring my custom Shopify App and Warehouse Inventory System —
-            powerful tools with sleek backend logic and real-world impact.
-            (Screenshots coming soon!)
-          </p>
+          <h2 className="text-4xl font-bold mb-8">Projects</h2>
+
+          {/* Inventory System Project */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold mb-2">Warehouse Inventory System</h3>
+            <p className="text-slate-300 mb-4">
+              A full-stack custom warehouse tool that tracks inventory, fabric lengths, and supply chain zones in real time. Built with C#, TypeScript, and Polymer.
+            </p>
+            <Link
+              href="/projects/inventory"
+              className="inline-block bg-white text-black px-4 py-2 rounded-md font-medium hover:bg-slate-200 transition"
+            >
+              📄 View Documentation
+            </Link>
+          </div>
+
+          {/* Shopify App Project */}
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold mb-2">Custom Shopify App</h3>
+            <p className="text-slate-300 mb-4">
+              A private Shopify app for product importing, order fulfillment, and automated inventory updates — optimized for factory use.
+            </p>
+            <Link
+              href="/projects/shopify"
+              className="inline-block bg-white text-black px-4 py-2 rounded-md font-medium hover:bg-slate-200 transition"
+            >
+              📄 View Documentation
+            </Link>
+          </div>
         </motion.div>
       </section>
 
